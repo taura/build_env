@@ -2,9 +2,9 @@
 mode?=root
 include ../../common.mk
 
-all : sos
+all : OK
 
-sos :
+OK :
 ifeq ($(mode),user)
 	sudo $(apt) remove sosreport
 	pip3 install --user sos sos-notebook
@@ -14,3 +14,4 @@ else
 	sudo pip3 install sos sos-notebook
 	sudo python3 -m sos_notebook.install
 endif
+	touch $@

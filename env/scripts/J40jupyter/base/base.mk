@@ -11,12 +11,13 @@ endif
 # https://github.com/ipython-contrib/jupyter_contrib_nbextensions/issues/1529
 pip_modules := tornado jupyter matplotlib jupyterlab jupyterhub notebook pixiedust
 
-all : jupyter
+all : OK
 
 include ../../common.mk
 #  nodejs-legacy
-jupyter : /usr/local/bin/configurable-http-proxy
+OK : /usr/local/bin/configurable-http-proxy
 	$(pip_inst) $(pip_modules)
+	touch $@
 
 /usr/local/bin/configurable-http-proxy :
 	$(aptinst) npm

@@ -2,7 +2,7 @@
 mode?=root
 include ../../common.mk
 
-all : nbgrader
+all : OK
 
 ifeq ($(mode),user)
 jupyter := ~/.local/bin/jupyter
@@ -10,7 +10,7 @@ else
 jupyter := jupyter
 endif
 
-nbgrader :
+OK :
 ifeq ($(mode),user)
 	pip3 install --user nbgrader
 #	pip3 install --user --upgrade nbconvert==5.6
@@ -24,3 +24,4 @@ else
 	sudo $(jupyter) nbextension enable --sys-prefix --py nbgrader
 	sudo $(jupyter) serverextension enable --sys-prefix --py nbgrader
 endif
+	touch $@
