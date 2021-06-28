@@ -15,8 +15,9 @@ all : jupyter
 
 include ../../common.mk
 #  nodejs-legacy
-jupyter : 
-	$(aptinst) npm
+jupyter : /usr/local/bin/configurable-http-proxy
 	$(pip_inst) $(pip_modules)
-	sudo npm install -g configurable-http-proxy
 
+/usr/local/bin/configurable-http-proxy :
+	$(aptinst) npm
+	sudo npm install -g configurable-http-proxy
