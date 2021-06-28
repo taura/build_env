@@ -24,7 +24,7 @@ $(config_slaves) : cur_dir_base=$(shell basename $(shell pwd))
 $(config_slaves) : configs/% : configs/0
 	$(ssh) $(user)@$(ip_addr) sudo $(apt) install make sqlite3 git
 	$(ssh) $(user)@$(ip_addr) git -C /tmp clone $(this_repo_url)
-	$(scp) -r data/*.csv $(user)@[$(ip_addr)]:/tmp/$(git_dir)/data/
+	$(scp) data/*.csv $(user)@[$(ip_addr)]:/tmp/$(git_dir)/data/
 	$(ssh) $(user)@$(ip_addr) make -C /tmp/$(git_dir) -f go.mk config_local
 
 configs/0 :
