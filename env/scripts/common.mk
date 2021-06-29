@@ -31,3 +31,17 @@ hostname := $(shell sqlite3 $(hdb) "select hostname from hosts where ip_addr=\"$
 hostnames := $(shell sqlite3 $(hdb) "select hostname from hosts where ip_addr=\"$(ip_addr)\"")
 node_id := $(shell sqlite3 $(hdb) "select node_id from hosts where ip_addr=\"$(ip_addr)\" limit 1")
 endif
+
+ifeq ($(ip_addr),)
+ip_addr ?= "unknown_ip_addr"
+endif
+ifeq ($(hostname),)
+hostname ?= "unknown_hostame"
+endif
+ifeq ($(hostnames),)
+hostnames ?= "unknown_hostames"
+endif
+ifeq ($(node_id),)
+node_id := "unknown_node_id"
+endif
+

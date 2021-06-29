@@ -2,7 +2,7 @@
 
 This is a git repo to configure multiple VM instances of mdx
 
-# For impatients ...
+# For impatient ...
 
 1. run several VM instances and obtain their addresses
 1. ssh to one of them
@@ -27,11 +27,11 @@ cd /tmp/build_env
 sudo apt install make sqlite3 # I wish them to be included in the template
 make -f go.mk -j 10
 ```
-The command `make -f go.mk -j 10` will first configure the VM you are in and then all other machines, up to10 machines conucurrently.
+The command `make -f go.mk -j 10` will first configure the VM you are in and then all other machines, up to10 machines concurrently.
 
 # FILES
 
-* env/scripts --- many subfolders configuring software environment
+* env/scripts --- many sub-folders configuring software environment
 * env/bin     --- small utilities to be used in scripts
 * data/       --- where you have hosts and users info specific to your cluster
   * data/hosts.csv.template --- a template of host info (copied to hosts.csv)
@@ -64,7 +64,7 @@ sudo make
 cd env/scripts
 sudo make
 ```  
-  * this way you can enhance environments already running without rebuilding them from scratch everytime you modify the environment
+  * this way you can enhance environments already running without rebuilding them from scratch every time you modify the environment
 
 # data/hosts.csv
 
@@ -72,7 +72,7 @@ sudo make
 * it should look like
 
 ```
-node_id,idx,ip_addr,hostname,desktop
+node_id,idx,ip_addr,hostname,labels
 0,0,2001:2f8:1041:1aa:250:56ff:feb0:663,taubun000.mdx.jp,
 1,0,2001:2f8:1041:1aa:250:56ff:feb0:665,taubun001,
 2,0,2001:2f8:1041:1aa:250:56ff:feb0:667,taubun002,
@@ -82,6 +82,7 @@ node_id,idx,ip_addr,hostname,desktop
 * a host is identified by node_id
 * idx must be a sequence number per node_id; as a result (node_id,idx) must be a key that uniquely identifies a row
 * idx can be used to have multiple rows per host, when a host has multiple IP addresses and/or hostnames
+* `labels` column is used by `env/scripts/J20packages/packages.mk`to configure which packages are installed on which hosts (see below)
 * you can add a new column as necessary, for example when you configure hosts differently
   * e.g., you add a column "slurm_compute" and set this column to 1 for hosts that will serve as slurm compute nodes
   * e.g., you add a column "desktop" and set this column to 1 for hosts that need desktop environment
@@ -143,7 +144,7 @@ It is useful when you do not want to leave plain text password on the machine (y
   * write new users to users.csv (you may or may not have existing users in it)
   * run users.mk again
   * existing users are not configured; their passwords remain intact
-  * information about newly added users will be appended to `env/scripts/I35users/made_users.csv`; so, if you have removed it after the last time you ran it, then this file will contain information only of the newly added users; otherwise, info about new users will be at the end of the file. information about exisiting users may or may not be accurate (they may have changed their passwords, etc.). in any event, users.mk won't affect existing users.
+  * information about newly added users will be appended to `env/scripts/I35users/made_users.csv`; so, if you have removed it after the last time you ran it, then this file will contain information only of the newly added users; otherwise, info about new users will be at the end of the file. information about existing users may or may not be accurate (they may have changed their passwords, etc.). in any event, users.mk won't affect existing users.
 
 ## data/packages.csv
 
@@ -151,20 +152,18 @@ It is useful when you do not want to leave plain text password on the machine (y
 * the file looks like this
 
 ```
-name,partial,master,clients,desktop
-python3-pip,1,,,
-gcc,1,,,
-g++,1,,,
-gdb,1,,,
-lv,1,,,
-numactl,1,,,
+name,labels
+python3-pip,1,
+gcc,1,
+g++,1,
+gdb,1,
+lv,1,
+numactl,1,
 ```
 
 * the `name` column is a package name
-* if `partial` column is empty, then the package will be installed on all hosts
-* if `partial` column is set to 1, then remaining columns determine which hosts install the package
-  * if `master` is set to 1, it is installed on the master host (node_id=0 in the `hosts` table)
-  * if `clients` is set to 1, it is installed on all hosts except the master host (node_id<>0 in the `hosts` table)
-  * if `desktop` is set to 1, it is installed on hosts that have `desktop` column set to 1 in the `hosts` table
-* you can add any column to this table and fine tune which packages are installed on which hosts. e.g., add `hogehoge` column and set it to 1 on packages P, Q, R, ...; add the same column `hogehoge` to the hosts table too and set it to 1 on hosts H, I, J, ... then P, Q, R, ... will be installed on H, I, J, ...
-
+* `labels` column, which exist in `hosts` and `packages` table, control which packages are installed on which hosts
+* a package P is installed on host H either when
+  * P's `labels` column is empty, or
+  * any label that appears in P's `labels` column also appears in the `labels` column of H
+* for example, you can put labels such as 'client desktop gpu' to indicate this package should be installed on hosts which have either of the three labels. you perhaps put a label gpu in any host supporting gpu, etc.
