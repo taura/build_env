@@ -26,7 +26,7 @@ ldif/user_template.ldif : ldif/user_template.ldif.template
 	sed -e "s/%host_fqdn%/$(host_fqdn)/g" -e "s/%host_dc%/$(host_dc)/g" -e "s/%host_only%/$(host_only)/g" ldif/user_template.ldif.template > ldif/user_template.ldif
 
 made_users.csv : $(users)
-	cat $(users) > $@
+	chmod 0600 $@
 
 $(users) : user=$(notdir $@)
 $(users) : uid=$(shell    sqlite3 $(db) 'select uid  from users where user="$(user)"')
