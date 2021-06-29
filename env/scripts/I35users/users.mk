@@ -16,6 +16,8 @@ ifeq ($(node_id),0)
   users   := $(patsubst %,made/users/%,$(users_))
   targets := $(made_users_csv) $(made_grps_csv)
 else
+  grps :=
+  users :=
   targets := 
 endif
 
