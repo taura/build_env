@@ -3,19 +3,17 @@
 #
 include ../common.mk
 
-grps__ := $(shell sqlite3 $(udb) 'select grp from users')
-grps_  := $(shell for g in $(grps__); do slapcat -a "(&(cn=$${g})(objectClass=posixGroup))" | grep dn: > /dev/null || echo $${g} ; done)
-grps   := $(patsubst %,made/grps/%,$(grps_))
-
-users__ := $(shell sqlite3 $(udb) 'select user from users')
-users_  := $(shell for u in $(users__); do slapcat -a uid=$${u} | grep dn: > /dev/null || echo $${u} ; done)
-users   := $(patsubst %,made/users/%,$(users_))
-
 slapadd := slapadd
 made_users_csv := made/users.csv
 made_grps_csv  := made/grps.csv
 
 ifeq ($(node_id),0)
+  grps__ := $(shell sqlite3 $(udb) 'select grp from users')
+  grps_  := $(shell for g in $(grps__); do slapcat -a "(&(cn=$${g})(objectClass=posixGroup))" | grep dn: > /dev/null || echo $${g} ; done)
+  grps   := $(patsubst %,made/grps/%,$(grps_))
+  users__ := $(shell sqlite3 $(udb) 'select user from users')
+  users_  := $(shell for u in $(users__); do slapcat -a uid=$${u} | grep dn: > /dev/null || echo $${u} ; done)
+  users   := $(patsubst %,made/users/%,$(users_))
   targets := $(made_users_csv) $(made_grps_csv)
 else
   targets := 
