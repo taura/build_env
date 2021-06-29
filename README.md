@@ -127,7 +127,7 @@ It is useful when you do not want to leave plain text password on the machine (y
 * in any case, `env/scripts/I35users/made_users.csv` is generated that lists all users' information including password
 * TODO: any way to force the user to change the password first time s/he login?
 
-### how to eliminate plain passwords from the machine?
+## Eliminate plain passwords from the host
 
 * after `env/scripts/I35users/users.mk` is run, it leaves plain passwords in the file `env/scripts/I35users/made_users.csv`
 * if you bring this file back to your local PC and remove it (and perhaps the original users.csv if it contains plain passwords too) from the VM, then the VM has no files containing users' passwords in plain text
