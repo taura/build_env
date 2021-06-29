@@ -28,7 +28,10 @@ $(config_slaves) : configs/% : configs/0
 	$(ssh) $(user)@$(ip_addr) make -C /tmp/$(git_dir) -f go.mk config_local > $@.tmp
 	mv $@.tmp $@
 
-configs/0 :
+configs/0 : configs/created
 	$(MAKE) -f go.mk config_local
+
+configs/created :
+	mkdir -p $@
 
 config_all : configs/0 $(config_slaves)
