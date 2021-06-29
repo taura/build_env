@@ -4,7 +4,7 @@
 include ../common.mk
 
 grps__ := $(shell sqlite3 $(udb) 'select grp from users')
-grps_  := $(shell for g in $(grps__); do slapcat -a '(&(cn=$${g})(objectClass=posixGroup))' | grep dn: > /dev/null || echo $${g} ; done)
+grps_  := $(shell for g in $(grps__); do slapcat -a "(&(cn=$${g})(objectClass=posixGroup))" | grep dn: > /dev/null || echo $${g} ; done)
 grps   := $(patsubst %,made/grps/%,$(grps_))
 
 users__ := $(shell sqlite3 $(udb) 'select user from users')
