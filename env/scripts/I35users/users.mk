@@ -30,7 +30,7 @@ made_users.csv : $(users)
 
 $(users) : user=$(notdir $@)
 $(users) : uid=$(shell    sqlite3 $(db) 'select uid  from users where user="$(user)"')
-$(users) : grp=$(shell  sqlite3 $(db) 'select grp  from users where user="$(user)"')
+$(users) : grp=$(shell    sqlite3 $(db) 'select grp  from users where user="$(user)"')
 $(users) : gid=$(shell    sqlite3 $(db) 'select gid  from users where user="$(user)"')
 $(users) : home=$(shell   sqlite3 $(db) 'select home from users where user="$(user)"')
 $(users) : mod=$(shell    sqlite3 $(db) 'select mod  from users where user="$(user)"')
@@ -46,7 +46,8 @@ $(users) : % : ldif/group_template.ldif ldif/user_template.ldif made/created /us
 	slapcat -a 'uid=$(user)' | grep dn: || sed -e s/%GROUP%/$(grp)/g -e s/%GID%/$(gid)/g -e s/%USER%/$(user)/g -e s/%UID%/$(uid)/g -e s:%HOME%:$(home):g -e s:%SHA_PASSWORD%:$(sha_pwd):g ldif/user_template.ldif | $(slapadd)
 	if ! test -d $(home) ; then mkdir -p $(home) -m 0$(mod) ; chown $(uid):$(gid) $(home) ; fi
 	./add_pubkey.sh $(home) $(uid) $(gid) "$(pubkey)"
-	echo "$(user),$(uid),$(grp),$(gid),$(home),$(mod),$(pwd),$(sha_pwd),$(pubkey)" > $@
+	echo "$(shell date),$(user),$(uid),$(grp),$(gid),$(home),$(mod),$(pwd),$(sha_pwd),$(pubkey)" >> made_users.csv
+	echo -n > $@
 
 /usr/bin/pwgen :
 	$(aptinst) pwgen

@@ -1,5 +1,5 @@
-node_id,ip_addr,idx,hostname
-0,2001:2f8:1041:1aa:250:56ff:feb0:663,0,taubun.mdx.jp
-1,2001:2f8:1041:1aa:250:56ff:feb0:665,0,taubun001
-2,2001:2f8:1041:1aa:250:56ff:feb0:667,0,taubun002
-3,2001:2f8:1041:1aa:250:56ff:feb0:669,0,taubun003
+node_id,idx,ip_addr,hostname
+0,0,2001:2f8:1041:1aa:250:56ff:feb0:663,taubun000.mdx.jp
+1,0,2001:2f8:1041:1aa:250:56ff:feb0:665,taubun001
+2,0,2001:2f8:1041:1aa:250:56ff:feb0:667,taubun002
+3,0,2001:2f8:1041:1aa:250:56ff:feb0:669,taubun003

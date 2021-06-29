@@ -18,7 +18,7 @@ cd build_env/data
 cp hosts.csv.template hosts.csv
 cp users.csv.template users.csv
 ```
-and edit `hosts.csv` and `users.csv` as you need them. At minimum, you need to list IP addresses of the host.  See below for more details
+and edit `hosts.csv` and `users.csv` as you need them. At minimum, you need to list IP addresses of the hosts.  See below for more details
 
 5. GO!
 ```
@@ -26,7 +26,7 @@ cd /tmp/build_env
 sudo apt install make sqlite3 # I wish them to be included in the template
 make -f go.mk -j 10
 ```
-The command `make -f go.mk` will first configure the VM you are in and then all other machines conucurrently.
+The command `make -f go.mk -j 10` will first configure the VM you are in and then all other machines, up to10 machines conucurrently.
 
 ## FILES
 
@@ -64,8 +64,8 @@ node_id,idx,ip_addr,hostname
 ```
 
 * a host is identified by node_id
-* (node_id,idx) must be a key that uniquely identifies a row
-* that is, idx is used when a host has multiple IP addresses and hostnames
+* idx must be a sequence number per node_id; as a result (node_id,idx) must be a key that uniquely identifies a row
+* idx can be used to have multiple rows per host, when a host has multiple IP addresses and/or hostnames
 * you can add a new column as necessary, for example when you add another config
   * e.g., you add a column "slurm_compute" and set this column to 1 for hosts that will serve as slurm compute nodes
   * e.g., you add a column "desktop" and set this column to 1 for hosts that need desktop environment
