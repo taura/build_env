@@ -11,7 +11,7 @@ endif
 
 OK : $(targets)
 
-host_fqdn := $(shell sqlite3 $(db) "select hostname from hosts where node_id=0 and idx=0")
+host_fqdn := $(shell sqlite3 $(hdb) "select hostname from hosts where node_id=0 and idx=0")
 host_dc := $(shell python3 -c "print(','.join([ 'dc=%s' % x for x in '$(host_fqdn)'.split('.') ]))")
 host_only := $(shell python3 -c "print('$(host_fqdn)'.split('.')[0])")
 
@@ -35,10 +35,10 @@ ldap_server : ldif/config.ldif ldif/dump.ldif
 	service slapd start
 	touch $@
 
-conf/ldap.conf : conf/ldap.conf.template $(db)
+conf/ldap.conf : conf/ldap.conf.template $(hdb)
 	sed -e "s/%host_fqdn%/$(host_fqdn)/g" -e "s/%host_dc%/$(host_dc)/g" -e "s/%host_only%/$(host_only)/g" conf/ldap.conf.template > conf/ldap.conf
 
-conf/nslcd.conf : conf/nslcd.conf.template $(db)
+conf/nslcd.conf : conf/nslcd.conf.template $(hdb)
 	sed -e "s/%host_fqdn%/$(host_fqdn)/g" -e "s/%host_dc%/$(host_dc)/g" -e "s/%host_only%/$(host_only)/g" conf/nslcd.conf.template > conf/nslcd.conf
 
 ldap_client : /etc/nsswitch.conf conf/ldap.conf conf/nslcd.conf

@@ -22,11 +22,12 @@ ensure_line := $(bin_dir)/ensure_line
 kv_merge := $(bin_dir)/kv_merge
 
 data_dir := $(this_dir)../../data
-db := $(this_dir)hosts_users.sqlite
+hdb := $(data_dir)/hosts.sqlite
+udb := $(data_dir)/users.sqlite
 
-ifneq ($(wildcard $(db)),)
+ifneq ($(wildcard $(hdb)),)
 ip_addr := $(shell $(bin_dir)/get_ip_addr)
-hostname := $(shell sqlite3 $(db) "select hostname from hosts where ip_addr=\"$(ip_addr)\" and idx = 0 limit 1")
-hostnames := $(shell sqlite3 $(db) "select hostname from hosts where ip_addr=\"$(ip_addr)\"")
-node_id := $(shell sqlite3 $(db) "select node_id from hosts where ip_addr=\"$(ip_addr)\" limit 1")
+hostname := $(shell sqlite3 $(hdb) "select hostname from hosts where ip_addr=\"$(ip_addr)\" and idx = 0 limit 1")
+hostnames := $(shell sqlite3 $(hdb) "select hostname from hosts where ip_addr=\"$(ip_addr)\"")
+node_id := $(shell sqlite3 $(hdb) "select node_id from hosts where ip_addr=\"$(ip_addr)\" limit 1")
 endif

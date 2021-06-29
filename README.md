@@ -12,13 +12,14 @@ cd /tmp
 git clone https://github.com/taura/build_env.git
 ```
 
-4. configure hosts and users
+4. configure hosts, users and packages
 ```
 cd build_env/data
-cp hosts.csv.template hosts.csv
-cp users.csv.template users.csv
+cp -p hosts.csv.template hosts.csv
+cp -p users.csv.template users.csv
+cp -p packages.csv.template packages.csv
 ```
-and edit `hosts.csv` and `users.csv` as you need them. At minimum, you need to list IP addresses of the hosts.  See below for more details
+and edit csv files as you need them. At minimum, you need to list IP addresses of the hosts.  See below for more details
 
 5. GO!
 ```
@@ -35,10 +36,11 @@ The command `make -f go.mk -j 10` will first configure the VM you are in and the
 * data/       --- where you have hosts and users info specific to your cluster
   * data/hosts.csv.template --- a template of host info (copied to hosts.csv)
   * data/users.csv.template --- a template of user info (copied to users.csv)
+  * data/packages.csv.template --- a template of packages info (copied to packages.csv)
 
 * when you extend your environment (e.g., when you add another piece of software), you may want to add a folder in env/scripts
   * you may fork this repo or get your contribution back to this repo if it is commonly useful
-* otherwise you only need to have hosts.csv and users.csv
+* otherwise you only need to have these csv files
 
 # Philosophy
 
@@ -70,17 +72,17 @@ sudo make
 * it should look like
 
 ```
-node_id,idx,ip_addr,hostname
-0,0,2001:2f8:1041:1aa:250:56ff:feb0:663,taubun000.mdx.jp
-1,0,2001:2f8:1041:1aa:250:56ff:feb0:665,taubun001
-2,0,2001:2f8:1041:1aa:250:56ff:feb0:667,taubun002
-3,0,2001:2f8:1041:1aa:250:56ff:feb0:669,taubun003
+node_id,idx,ip_addr,hostname,desktop
+0,0,2001:2f8:1041:1aa:250:56ff:feb0:663,taubun000.mdx.jp,
+1,0,2001:2f8:1041:1aa:250:56ff:feb0:665,taubun001,
+2,0,2001:2f8:1041:1aa:250:56ff:feb0:667,taubun002,
+3,0,2001:2f8:1041:1aa:250:56ff:feb0:669,taubun003,
 ```
 
 * a host is identified by node_id
 * idx must be a sequence number per node_id; as a result (node_id,idx) must be a key that uniquely identifies a row
 * idx can be used to have multiple rows per host, when a host has multiple IP addresses and/or hostnames
-* you can add a new column as necessary, for example when you add another config
+* you can add a new column as necessary, for example when you configure hosts differently
   * e.g., you add a column "slurm_compute" and set this column to 1 for hosts that will serve as slurm compute nodes
   * e.g., you add a column "desktop" and set this column to 1 for hosts that need desktop environment
 * when you launch the configuration script, this CSV file is converted to an sqlite3 table named `hosts` so that you can query it with sqlite3 command from within your makefiles
@@ -130,7 +132,11 @@ It is useful when you do not want to leave plain text password on the machine (y
 ## Eliminate plain passwords from the host
 
 * after `env/scripts/I35users/users.mk` is run, it leaves plain passwords in the file `env/scripts/I35users/made_users.csv`
-* if you bring this file back to your local PC and remove it (and perhaps the original users.csv if it contains plain passwords too) from the VM, then the VM has no files containing users' passwords in plain text
+* the following files may contain user passwords in plain text
+  * `env/scripts/I35users/made_users.csv` --- created by `env/scripts/I35users/users.mk`
+  * `data/users.csv` --- created by you
+  * `data/users.sqlite` --- created by `env/scripts/I00db/db.mk`
+* if you bring `env/scripts/I35users/made_users.csv` back to your local PC and remove all three files from the VM, then the VM has no files containing users' passwords in plain text
 * by default, users.mk runs only on the master (the VM you directly launched it on), so it will be created only on the master (no need to remove them on other machines)
 
 * some time later, you may want to add new users, for which you may want to run users.mk again.  this is how things are supposed to work
@@ -138,4 +144,27 @@ It is useful when you do not want to leave plain text password on the machine (y
   * run users.mk again
   * existing users are not configured; their passwords remain intact
   * information about newly added users will be appended to `env/scripts/I35users/made_users.csv`; so, if you have removed it after the last time you ran it, then this file will contain information only of the newly added users; otherwise, info about new users will be at the end of the file. information about exisiting users may or may not be accurate (they may have changed their passwords, etc.). in any event, users.mk won't affect existing users.
+
+## data/packages.csv
+
+* it is an easy interface to add a package to your environment
+* the file looks like this
+
+```
+name,partial,master,clients,desktop
+python3-pip,1,,,
+gcc,1,,,
+g++,1,,,
+gdb,1,,,
+lv,1,,,
+numactl,1,,,
+```
+
+* the `name` column is a package name
+* if `partial` column is empty, then the package will be installed on all hosts
+* if `partial` column is set to 1, then remaining columns determine which hosts install the package
+  * if `master` is set to 1, it is installed on the master host (node_id=0 in the `hosts` table)
+  * if `clients` is set to 1, it is installed on all hosts except the master host (node_id<>0 in the `hosts` table)
+  * if `desktop` is set to 1, it is installed on hosts that have `desktop` column set to 1 in the `hosts` table
+* you can add any column to this table and fine tune which packages are installed on which hosts. e.g., add `hogehoge` column and set it to 1 on packages P, Q, R, ...; add the same column `hogehoge` to the hosts table too and set it to 1 on hosts H, I, J, ... then P, Q, R, ... will be installed on H, I, J, ...
 

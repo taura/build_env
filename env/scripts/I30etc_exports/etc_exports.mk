@@ -1,5 +1,5 @@
 #
-# export.mk --- generate /etc/exports on the master
+# etc_exports.mk --- generate /etc/exports on the master
 #
 include ../common.mk
 ifeq ($(node_id),0)
@@ -7,13 +7,13 @@ ifeq ($(node_id),0)
 else
   targets:=
 endif
-clients:=$(shell sqlite3 $(db) "select distinct ip_addr from hosts")
+clients:=$(shell sqlite3 $(hdb) "select distinct ip_addr from hosts")
 
 OK : $(targets)
 
 exports : /etc/exports
 
-/etc/exports : $(db)
+/etc/exports : $(hdb)
 	(echo -n "/home " ; for c in $(clients); do echo -n "$$c(rw,async,no_root_squash,no_subtree_check) "; done ; echo "") > add_exports 
 	$(kv_merge) /etc/exports add_exports > new_etc_exports
 	$(inst) new_etc_exports /etc/exports

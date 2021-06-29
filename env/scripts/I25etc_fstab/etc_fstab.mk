@@ -9,7 +9,7 @@ else
   fstab:=fstab_client
 endif
 
-nfs_server := $(shell sqlite3 $(db) "select hostname from hosts where node_id=0 and idx=0")
+nfs_server := $(shell sqlite3 $(hdb) "select hostname from hosts where node_id=0 and idx=0")
 
 OK : /etc/fstab
 

@@ -3,31 +3,24 @@
 #
 include ../common.mk
 
-pkgs := 
-pkgs += libsqlite3-dev
-pkgs += sqlite3
-pkgs += python3-pip
-pkgs += gcc
-pkgs += g++
-pkgs += gdb
-#pkgs += clang
-#pkgs += clang-3.8
-#pkgs += clang-3.8-doc
-#pkgs += clang-3.8-examples
-#pkgs += lldb-3.8
-#pkgs += libtbb-dev
-pkgs += lv
-pkgs += numactl
-pkgs += unzip
-pkgs += subversion
-pkgs += git
-pkgs += opam
-pkgs += camlp4-extra
-pkgs += libcairo2-dev
-pkgs += emacs
-pkgs += gcc-doc
-pkgs += gdb-doc
-pkgs += gnuplot
+cond := partial=""
+
+ifeq ($(node_id),0)
+cond +=  or master=1
+else
+cond +=  or clients=1
+endif
+
+ifeq ($(node_id),)
+desktop := 
+else
+desktop := $(shell sqlite3 $(hdb) 'select desktop from hosts where node_id=$(node_id)')
+endif
+ifeq ($(desktop),1)
+cond +=  or desktop=1
+endif
+
+pkgs := $(shell sqlite3 $(hdb) 'select name from packages where $(cond)')
 
 OK : $(pkgs)
 
@@ -35,5 +28,5 @@ $(pkgs) : % : do_install
 
 do_install :
 	$(apt) update
-	$(apt) upgrade
 	$(aptinst) $(pkgs)
+	$(apt) upgrade
