@@ -87,6 +87,7 @@ date,user,uid,grp,gid,home,mod,sudo,pwd,sha_pwd,pubkey
 ```
 
 * similarly to hosts.csv, this file is converted into an sqlite3 table called users in `env/scripts/I00db/db.mk`
+* you can add new columns in case you configure users differently
 * the database is then used by `env/scripts/I35users/users.mk`
 * the user database is managed by LDAP (see `env/scripts/I15ldap/ldap.mk`)
 
