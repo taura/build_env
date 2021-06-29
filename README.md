@@ -2,7 +2,7 @@
 
 This is a git repo to configure multiple VM instances of mdx
 
-## for impatients ...
+# For impatients ...
 
 1. run several VM instances and obtain their addresses
 1. ssh to one of them
@@ -28,7 +28,7 @@ make -f go.mk -j 10
 ```
 The command `make -f go.mk -j 10` will first configure the VM you are in and then all other machines, up to10 machines conucurrently.
 
-## FILES
+# FILES
 
 * env/scripts --- many subfolders configuring software environment
 * env/bin     --- small utilities to be used in scripts
@@ -40,17 +40,31 @@ The command `make -f go.mk -j 10` will first configure the VM you are in and the
   * you may fork this repo or get your contribution back to this repo if it is commonly useful
 * otherwise you only need to have hosts.csv and users.csv
 
-## philosophy
+# Philosophy
 
 * a set of scripts to configure hosts _after they are up and running_
 * rely only on makefiles, shell scripts and very basic sqlite3, which mere mortals can understand
-* use make judiciously to make sure that
+* use make judiciously to prepare for failures
   * when some configs fail, fix the script and just run it again
-  * when you run it again, part of the configs already succeeded are not repeated
+  * each script directory can be run individually; just do
+```
+cd env/scripts/INNwhatever
+sudo make -f whatever.mk -n  # to see what happens
+sudo make -f whatever.mk
+```  
+  * when you run the whole thing again, part of the configs already succeeded are not repeated
+```
+cd env/scripts
+sudo make
+```  
   * when you add another piece of software later, add script and just run it again
+```
+cd env/scripts
+sudo make
+```  
   * this way you can enhance environments already running without rebuilding them from scratch everytime you modify the environment
 
-## data/hosts.csv
+# data/hosts.csv
 
 * copy data/hosts.csv.template to data/hosts.csv and edit it to reflect your cluster
 * it should look like
