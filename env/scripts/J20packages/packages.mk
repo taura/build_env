@@ -4,7 +4,7 @@
 include ../common.mk
 
 host_labels := $(shell sqlite3 $(hdb) 'select labels from hosts where node_id=$(node_id)')
-cond := labels="" $(foreach l,$(host_labels),or labels like "%$(l)%")
+cond := labels="" $(foreach l,$(host_labels),or labels like "$(l)" or labels like "$(l) %" or labels like "% $(l) %" or labels like "% $(l)")
 pkgs := $(shell sqlite3 $(hdb) 'select name from packages where $(cond)')
 
 OK : $(pkgs)
