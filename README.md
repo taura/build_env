@@ -1,5 +1,15 @@
 # build_env
 
+
+こちらに移動しました. 使い方は同じです
+
+<a href="https://github.com/mdx-jp/machine-configs" target="_blank">
+https://github.com/mdx-jp/machine-configs
+</a>
+
+# 以下は一応残します
+
+
 This is a git repo to configure multiple VM instances of mdx
 
 # For impatient ...
